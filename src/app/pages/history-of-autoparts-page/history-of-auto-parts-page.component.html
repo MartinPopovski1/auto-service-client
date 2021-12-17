@@ -1,0 +1,49 @@
+<div class="history-of-auto-parts-page-wrapper">
+  <div class="row justify-content-center">
+
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+      <div class="header-container row">
+        <div class="col-lg-2 col-md-3 col-sm-3 col-xs-3">
+          <button type="button" class="btn btn-lg btn-secondary" [routerLink]="['/search-invoice/' + route.snapshot.params['regNum']]">
+            Назад
+          </button>
+        </div>
+        <div class="col-lg-8 col-md-6 col-sm-6 col-xs-6 header-title">
+          Историја на делови
+        </div>
+        <div class="col-lg-2 col-md-3 col-sm-3 col-xs-3 d-flex justify-content-end">
+
+        </div>
+      </div>
+
+      <div class="row justify-content-center mt-5 pt-4">
+        <div class="col-lg-4 col-md-6 col-sm-9 col-xs-12 stock-page-search-container">
+          <input class="form-control me-2" [(ngModel)]="searchText" type="search" placeholder="Пребарај дел" >
+        </div>
+      </div>
+
+      <div class="row justify-content-center mt-5 pt-3">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 history-of-auto-parts-page-search-container">
+          <table class="table table-striped">
+            <thead>
+            <tr>
+              <th scope="col">Дел</th>
+              <th scope="col" class="text-end">Датум</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let autoPart of (autoParts | filter:searchText)">
+              <td>{{autoPart.autoPart && autoPart.autoPart.name}}</td>
+              <td class="text-end">{{autoPart.date}}</td>
+            </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+
+
+    </div>
+  </div>
+</div>
+

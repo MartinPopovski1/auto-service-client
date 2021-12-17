@@ -1,0 +1,73 @@
+<div class="upload-invoice-page-wrapper">
+  <div class="row justify-content-center">
+
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+      <div class="header-container row">
+        <div class="col-lg-2 col-md-3 col-sm-3 col-xs-3">
+          <button type="button" class="btn btn-lg btn-secondary" [routerLink]="['/search-invoice']">
+            Назад
+          </button>
+        </div>
+        <div class="col-lg-8 col-md-6 col-sm-6 col-xs-6 header-title">
+          Прикачи документ
+        </div>
+        <div class="col-lg-2 col-md-3 col-sm-3 col-xs-3 d-flex justify-content-end">
+        </div>
+      </div>
+
+      <div class="row justify-content-center mt-5 pt-5">
+        <div class="col-lg-6 col-md-8 col-sm-9 col-xs-11" *ngIf="!isPageSpinnerOn">
+          <div>Прикачи excel документ</div>
+          <div class="row upload-invoice-input-wrapper">
+            <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10 p-0 custom-file-input-wrapper">
+              <input type="file" class="custom-file-input" multiple id="importFile" (change)="onFilesUpload($event)">
+            </div>
+            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2 text-end p-0">
+              <button class="btn btn-primary" type="button"
+                      [disabled]="ownerEmptyError || !uploadedInvoices || !uploadedInvoices.length" (click)="import()">
+                Зачувај
+              </button>
+            </div>
+          </div>
+          <p *ngIf="serverErrorMessage">
+            <ngb-alert type="danger" [dismissible]="false">
+              {{serverErrorMessage}}
+            </ngb-alert>
+          </p>
+          <p *ngIf="successMessage">
+            <ngb-alert type="success" [dismissible]="false">
+              {{successMessage}}
+            </ngb-alert>
+          </p>
+          <p *ngIf="ownerEmptyError">
+            <ngb-alert type="danger" [dismissible]="false">
+              Во некоја од фактурите не е внесен сопственик
+            </ngb-alert>
+          </p>
+
+          <div class="mt-5 pt-3">Прикачи word документ (формат docx)</div>
+          <div class="row upload-invoice-input-wrapper">
+            <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10 p-0 custom-file-input-wrapper">
+              <input type="file" multiple placeholder="Upload docx template" (change)="onWordFilesUpload($event)">
+            </div>
+            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2 text-end p-0">
+              <button class="btn btn-primary" type="button" >Зачувај</button>
+            </div>
+          </div>
+        </div>
+
+
+
+
+        <div *ngIf="isPageSpinnerOn" class="row justify-content-center mt-5 pt-5 page-spinner-wrapper " >
+          <span class="spinner-border mt-5"></span>
+        </div>
+      </div>
+
+
+
+
+    </div>
+  </div>
+</div>
+

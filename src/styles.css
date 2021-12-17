@@ -1,1 +1,20 @@
 /* You can add global styles to this file, and also import other style files */
+
+html {
+  font-size: 1em;
+}
+body {
+  background-color: #eee;
+  font-family: 'Roboto', Helevtica, sans-serif;
+}
+.row {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+.sr-only {
+  display: none;
+}
+
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}

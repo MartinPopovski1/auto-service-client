@@ -1,0 +1,559 @@
+<!--  the actual page -->
+<div class="invoice-page-wrapper">
+  <div class="row justify-content-center" *ngIf="!isPageSpinnerOn">
+
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+      <div class="header-container row">
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-3">
+          <button [routerLink]="['/search-invoice/' + invoiceRegistrationNumber]" type="button"
+                  class="btn btn-lg btn-secondary">
+            Назад
+          </button>
+
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-4 col-xs-2 header-title">
+          <div *ngIf="!editMode">
+            <div *ngIf="invoiceDocumentType === 'invoice'">Прегледај Фактура</div>
+            <div *ngIf="invoiceDocumentType === 'offer'">Прегледај Понуда</div>
+            <div *ngIf="invoiceDocumentType === 'warrant'">Прегледај Работен налог</div>
+          </div>
+          <div *ngIf="editMode">
+            <div *ngIf="invoiceDocumentType === 'invoice'">Креирај Фактура</div>
+            <div *ngIf="invoiceDocumentType === 'offer'">Креирај Понуда</div>
+            <div *ngIf="invoiceDocumentType === 'warrant'">Креирај Работен налог</div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-4 d-flex justify-content-end">
+          <button *ngIf="!createMode && !editMode" (click)="onCreateSameInvoice()" type="button"
+                  class="btn btn-lg btn-primary">
+            <span *ngIf="invoiceDocumentType === 'invoice'">Креирај иста Фактура</span>
+            <span *ngIf="invoiceDocumentType === 'offer'">Креирај иста Понуда</span>
+            <span *ngIf="invoiceDocumentType === 'warrant'">Креирај ист Налог</span>
+          </button>
+        </div>
+      </div>
+
+      <p *ngIf="invoiceErrorMessage">
+        <ngb-alert type="danger" [dismissible]="false">
+          {{invoiceErrorMessage}}
+        </ngb-alert>
+      </p>
+      <p *ngIf="invoiceSuccessMessage">
+        <ngb-alert type="success" [dismissible]="false">
+          {{invoiceSuccessMessage}}
+        </ngb-alert>
+      </p>
+
+      <div class="invoice-form-content-wrapper user-select-none">
+
+        <div class="row d-flex mt-2">
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 d-flex fw-bold">
+            ИНФОРМАЦИИ ЗА КОЛА
+          </div>
+        </div>
+
+        <div class="row d-flex mt-4">
+          <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+            Датум
+            <div class="input-group mb-3">
+              <input type="text" [disabled]="!this.editMode" [(ngModel)]="invoiceDate"  (blur)="invoiceDateValidator()" class="form-control"
+                     placeholder="Внеси датум (xx.xx.xxxx)" required>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+            Фактура
+            <div class="input-group mb-3">
+              <input type="text" [disabled]="!this.editMode" [(ngModel)]="invoiceNumber"  (blur)="invoiceNumberValidator()" class="form-control"
+                     placeholder="Внеси фактура" required>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+            Регистрација
+            <div class="input-group mb-3">
+              <input type="text" [disabled]="!this.editMode" [(ngModel)]="invoiceRegistrationNumber"
+                     class="form-control" placeholder="Внеси регистрација (XX-000-XX)" required>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+            Марка на возило
+            <div class="input-group mb-3">
+              <input type="text" [disabled]="!this.editMode" [(ngModel)]="invoiceBrand" class="form-control"
+                     placeholder="Внеси марка" required>
+            </div>
+          </div>
+        </div>
+        <div class="row d-flex mt-3">
+          <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+            Год. на производство
+            <div class="input-group mb-3">
+              <input type="number" [disabled]="!this.editMode" [(ngModel)]="invoiceManufacturingYear"
+                     class="form-control" placeholder="Внеси година">
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+            Бр. на мотор
+            <div class="input-group mb-3">
+              <input type="text" [disabled]="!this.editMode" [(ngModel)]="invoiceEngineNumber" class="form-control"
+                     placeholder="Внеси број">
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+            Бр. на шасија
+            <div class="input-group mb-3">
+              <input type="text" [disabled]="!this.editMode" [(ngModel)]="invoiceChassisNumber" class="form-control"
+                     placeholder="Внеси број">
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+            Тип
+            <div class="input-group mb-3">
+              <input type="text" [disabled]="!this.editMode" [(ngModel)]="invoiceType" class="form-control"
+                     placeholder="Внеси тип" required>
+            </div>
+          </div>
+        </div>
+        <div class="row d-flex mt-3">
+          <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+            KW
+            <div class="input-group mb-3">
+              <input type="number" [disabled]="!this.editMode" [(ngModel)]="invoiceKw" class="form-control"
+                     placeholder="Внеси KW">
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+            ЕМБ
+            <div class="input-group mb-3">
+              <input type="number" [disabled]="!this.editMode" [(ngModel)]="invoiceEmb" class="form-control"
+                     placeholder="Внеси ЕМБ">
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+            KM
+            <div class="input-group mb-3">
+              <input type="number" [disabled]="!this.editMode" [(ngModel)]="invoiceKm" class="form-control"
+                     placeholder="Внеси KM">
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+            Контакт
+            <div class="input-group mb-2">
+              <input type="text" [disabled]="!this.editMode" [(ngModel)]="invoiceContact" class="form-control"
+                     placeholder="Внеси контакт">
+            </div>
+          </div>
+        </div>
+        <div class="row d-flex mt-3">
+          <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+            Сопственик
+            <div class="input-group mb-3">
+              <input type="text" [disabled]="!this.editMode" [(ngModel)]="invoiceOwner" class="form-control"
+                     placeholder="Внеси сопственик">
+            </div>
+          </div>
+          <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 ">
+            Адреса
+            <div class="input-group mb-3">
+              <input type="text" [disabled]="!this.editMode" [(ngModel)]="invoiceAddress" class="form-control"
+                     placeholder="Внеси адреса">
+            </div>
+          </div>
+        </div>
+
+
+        <div class="row d-flex mt-3" *ngIf="this.editMode">
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 d-flex fw-bold">
+            ДЕЛОВИ ОД МАГАЦИН
+          </div>
+        </div>
+
+        <div class="row d-flex mt-3" *ngIf="selectedStockAutoParts && selectedStockAutoParts.length">
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <table class="table table-striped">
+              <thead>
+              <tr>
+                <th scope="col">Дел</th>
+                <th scope="col">Бренд</th>
+                <th scope="col" class="text-end">Количина</th>
+                <th scope="col" class="text-end">Цена</th>
+                <th scope="col" class="text-end">Вкупно</th>
+                <th scope="col" class="text-end" *ngIf="editMode">Акции</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let autoPart of selectedStockAutoParts">
+                <td>{{autoPart.name}}</td>
+                <td>{{autoPart.brand}}</td>
+                <td class="text-end">{{autoPart.quantity}}</td>
+                <td class="text-end">{{autoPart.purchasePrice}}</td>
+                <td class="text-end">{{autoPart.totalPrice}}</td>
+                <td *ngIf="editMode" class="text-end">
+                  <span class="material-icons delete-from-table-wrapper"
+                        (click)="onRemoveItemFromStockParts(autoPart)">delete</span>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+
+        <div class="row d-flex mt-4 " *ngIf="this.editMode">
+          <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+            Внеси дел
+            <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3 input-group mb-3">
+              <input id="typeahead-basic" class="form-control"
+                     (ngModelChange)="onChangePartHandler($event)"
+                     (selectItem)="onChosenOptionHandler($event)"
+                     [(ngModel)]="searchStockPart"
+                     [ngbTypeahead]="search" [resultTemplate]="rt" [inputFormatter]="formatter" type="search"
+                     placeholder="Пребарај дел">
+              <ng-template #rt let-r="result" let-t="term">
+                <ngb-highlight [result]="r.searchLabel" [term]="t"></ngb-highlight>
+              </ng-template>
+            </div>
+          </div>
+          <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+            Бренд
+            <div class="input-group mb-3">
+              <input disabled type="text" [(ngModel)]="newStockPartBrand" class="form-control">
+            </div>
+          </div>
+          <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+            Количина
+            <div class="input-group mb-3">
+              <input type="number" [(ngModel)]="newStockPartQuantity"
+                     (ngModelChange)="onKeyDownQuantityAndPriceHandler($event)"
+                     class="form-control">
+            </div>
+          </div>
+          <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+            <div class="text-nowrap">
+              Цена
+            </div>
+            <div class="input-group mb-3">
+              <input type="number" [(ngModel)]="newStockPartPurchasePrice"
+                     (ngModelChange)="onKeyDownQuantityAndPriceHandler($event)"
+                     class="form-control">
+            </div>
+          </div>
+          <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+            Вкупно
+            <div class="input-group mb-3 user-select-none">
+              <input disabled type="text" [(ngModel)]="newStockPartTotalPrice" class="form-control">
+            </div>
+          </div>
+          <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1">
+            <div class="check-icon-wrapper"
+                 [ngClass]="{'check-icon-wrapper-hover': checkIfNewStockPartInputsAreFilled()}"
+                 (click)="addNewRowInSelectedPartsTable()">
+              <span class="material-icons" size="12px">done</span>
+            </div>
+          </div>
+        </div>
+
+        <p *ngIf="showAlertForAlreadyEnteredPart">
+          <ngb-alert type="danger" [dismissible]="false">Делот е веќе внесен во табелата, може да се избрише и да се
+            внесе пак ако е потребно
+          </ngb-alert>
+        </p>
+
+        <div class="row d-flex mt-3" *ngIf="this.editMode">
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 d-flex fw-bold">
+            ДЕЛОВИ НАДВОР ОД МАГАЦИН
+          </div>
+        </div>
+
+        <div class="row d-flex mt-3" *ngIf="freeParts && freeParts.length">
+          <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <table class="table table-striped">
+              <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Дел</th>
+                <th scope="col" class="text-end">Количина</th>
+                <th scope="col" class="text-end">Цена</th>
+                <th scope="col" class="text-end">Вкупно</th>
+                <th *ngIf="editMode" scope="col" class="text-end">Акции</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let autoPart of freeParts, let i = index" [attr.data-index]='i'>
+                <td>{{i + 1}}</td>
+                <td>{{autoPart.name}}</td>
+                <td class="text-end">{{autoPart.quantity}}</td>
+                <td class="text-end">{{autoPart.purchasePrice}}</td>
+                <td class="text-end">{{autoPart.totalPrice}}</td>
+                <td *ngIf="editMode" class="text-end">
+                  <span class="material-icons delete-from-table-wrapper" (click)="onRemoveItemFromFreeParts(autoPart)">
+                    delete
+                  </span>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+
+        <div class="row d-flex mt-4 " *ngIf="this.editMode">
+          <div class="col-lg-5 col-md-5 col-sm-5 col-xs-5">
+            Внеси дел
+            <div class="input-group mb-3">
+              <input class="form-control" type="text" [(ngModel)]="freePart" placeholder="Напиши дел">
+            </div>
+          </div>
+          <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+            Количина
+            <div class="input-group mb-3">
+              <input type="number" [(ngModel)]="newFreePartQuantity"
+                     (ngModelChange)="onKeyDownQuantityAndPriceFreePartHandler($event)"
+                     class="form-control">
+            </div>
+          </div>
+          <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+            <div class="text-nowrap">
+              Цена
+            </div>
+            <div class="input-group mb-3">
+              <input type="number" [(ngModel)]="newFreePartPurchasePrice"
+                     (ngModelChange)="onKeyDownQuantityAndPriceFreePartHandler($event)"
+                     class="form-control">
+            </div>
+          </div>
+          <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+            Вкупно
+            <div class="input-group mb-3 user-select-none">
+              <input disabled type="text" [(ngModel)]="newFreePartTotalPrice" class="form-control">
+            </div>
+          </div>
+          <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1">
+            <div class="check-icon-wrapper"
+                 [ngClass]="{'check-icon-wrapper-hover': checkIfNewFreePartInputsAreFilled()}"
+                 (click)="addNewRowInFreePartsTable()">
+              <span class="material-icons" size="12px">done</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="row d-flex mt-3">
+          <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+            Работна рака
+            <div class="input-group mb-3">
+              <input type="text" [disabled]="!this.editMode" (ngModelChange)="onLabourChange($event)"
+                     [(ngModel)]="invoiceLabour" class="form-control" placeholder="Внеси работна рака">
+            </div>
+          </div>
+          <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 ">
+            Вкупно
+            <div class="input-group mb-3">
+              <input type="text" [disabled]="true" [(ngModel)]="invoiceTotalPrice" class="form-control"
+                     placeholder="Вкупно">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row pb-5">
+      <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 d-flex justify-content-end pb-5">
+        <button *ngIf="!editMode && !createMode" (click)="editMode=true" type="button"
+                class="btn btn-lg btn-primary m-3">
+          Измени
+        </button>
+        <div *ngIf="!editMode && !createMode" class="invoice-print-select-wrapper">
+          <div ngbDropdown class="d-inline-block">
+            <button class="btn btn-lg btn-primary" id="dropdownBasic1"
+                    ngbDropdownToggle>Печати
+            </button>
+            <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+              <button ngbDropdownItem (click)="onPrintInvoice(true)">Без ДДВ</button>
+              <button ngbDropdownItem (click)="onPrintInvoice(false)">Со ДДВ</button>
+            </div>
+          </div>
+        </div>
+        <button *ngIf="editMode || createMode" (click)="onSaveInvoice()" type="button"
+                class="btn btn-lg btn-primary m-3">
+          Зачувај
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+
+  <div *ngIf="isPageSpinnerOn && false" class="row justify-content-center mt-5 pt-5 page-spinner-wrapper ">
+    <span class="spinner-border mt-5"></span>
+  </div>
+
+
+  <common-modal #modalForRemoveStockParts [modalConfig]="customModalConfigForRemoveStockParts">
+    <div>
+      Дали сте сигурни дека сакате да го избришете овој дел од табелата?
+    </div>
+  </common-modal>
+
+  <common-modal #modalForRemoveFreeParts [modalConfig]="customModalConfigForRemoveFreeParts">
+    <div>
+      Дали сте сигурни дека сакате да го избришете овој дел од табелата?
+    </div>
+  </common-modal>
+
+
+</div>
+<!--  print version -->
+
+<div class="invoice-print-wrapper">
+
+  <div class="row invoice-print-header">
+<!--    <div class="col-lg-5 col-md-4 col-sm-4 col-xs-4 invoice-print-header-logo">
+      <img src="../../../assets/logo.jpg" alt="logo-err"/>
+    </div>
+    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4 d-flex flex-column justify-content-center fw-bold" style="font-size:1.9rem;">
+      <div>Авто Сервис</div>
+      <div>Митревски</div>
+    </div>
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-4 justify-content-end">
+      <div class="invoice-print-header-title"> ФАКТУРА</div>
+      <div class="row invoice-print-header-info">
+        <div class="col-lg-5 col-md-6 col-sm-6 d-flex flex-column justify-content-end invoice-print-header-labels">
+          <div class="d-flex justify-content-end">Број #:</div>
+          <div class="d-flex justify-content-end">Датум:</div>
+        </div>
+        <div class="col-lg-7 col-md-6 col-sm-6 fw-bold ">
+          <div class="d-flex justify-content-end">{{this.invoiceNumber}}</div>
+          <div class="d-flex justify-content-end">{{this.invoiceDate}}</div>
+        </div>
+      </div>
+
+    </div>-->
+  </div>
+  <div class="row invoice-print-content">
+    <div class="row invoice-content-car-info-wrapper">
+      <div class="col-lg-6 col-md-6 col-sm-6">
+        <div class="row">
+          <div class="col-lg-4 col-md-5 col-sm-6 invoice-print-labels">Број #:</div>
+          <div class="col-lg-8 col-md-7 col-sm-6 invoice-print-values">{{this.invoiceNumber}}</div>
+        </div>
+        <div class="row">
+          <div class="col-lg-6 col-md-6 col-sm-6 invoice-print-labels">Регистрација:</div>
+          <div class="col-lg-6 col-md-6 col-sm-6 invoice-print-values">{{this.invoiceRegistrationNumber}}</div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4 col-md-5 col-sm-6 invoice-print-labels">Марка на возило:</div>
+          <div class="col-lg-8 col-md-7 col-sm-6 invoice-print-values">{{this.invoiceBrand}}</div>
+        </div>
+        <div class="row">
+          <div class="col-lg-6 col-md-6 col-sm-6 invoice-print-labels">Тип:</div>
+          <div class="col-lg-6 col-md-6 col-sm-6 invoice-print-values">{{this.invoiceType}}</div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4 col-md-5 col-sm-6 invoice-print-labels">Год. на производство:</div>
+          <div class="col-lg-8 col-md-7 col-sm-6 invoice-print-values">{{this.invoiceManufacturingYear}}</div>
+        </div>
+        <div class="row">
+          <div class="col-lg-6 col-md-6 col-sm-6 invoice-print-labels">Број на мотор:</div>
+          <div class="col-lg-6 col-md-6 col-sm-6 invoice-print-values">{{this.invoiceEngineNumber}}</div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4 col-md-5 col-sm-6 invoice-print-labels">Број на шасија:</div>
+          <div class="col-lg-8 col-md-7 col-sm-6 invoice-print-values">{{this.invoiceChassisNumber}}</div>
+        </div>
+      </div>
+
+      <div class="col-lg-6 col-md-6 col-sm-6 invoice-print-right-column-wrapper">
+
+        <div class="row">
+          <div class="col-lg-6 col-md-6 col-sm-6 invoice-print-labels">Датум:</div>
+          <div class="col-lg-6 col-md-6 col-sm-6 invoice-print-values">{{this.invoiceDate}}</div>
+        </div>
+        <div class="row">
+          <div class="col-lg-3 col-md-3 col-sm-4 invoice-print-labels">Сопственик:</div>
+          <div class="col-lg-9 col-md-9 col-sm-8 invoice-print-values">{{this.invoiceOwner}}</div>
+        </div>
+        <div class="row">
+          <div class="col-lg-3 col-md-3 col-sm-4 invoice-print-labels">Адреса:</div>
+          <div class="col-lg-9 col-md-9 col-sm-8 invoice-print-values">{{this.invoiceAddress}}</div>
+        </div>
+        <div class="row">
+          <div class="col-lg-6 col-md-6 col-sm-6 invoice-print-labels">ЕМБ:</div>
+          <div class="col-lg-6 col-md-6 col-sm-6 invoice-print-values">{{this.invoiceEmb}}</div>
+        </div>
+        <div class="row">
+          <div class="col-lg-6 col-md-6 col-sm-6 invoice-print-labels">КМ:</div>
+          <div class="col-lg-6 col-md-6 col-sm-6 invoice-print-values">{{this.invoiceKm}}</div>
+        </div>
+        <div class="row">
+          <div class="col-lg-6 col-md-6 col-sm-6 invoice-print-labels">KW:</div>
+          <div class="col-lg-6 col-md-6 col-sm-6 invoice-print-values">{{this.invoiceKw}}</div>
+        </div>
+        <div class="row">
+          <div class="col-lg-4 col-md-5 col-sm-6 invoice-print-labels">Лице за контакт:</div>
+          <div class="col-lg-8 col-md-7 col-sm-6 invoice-print-values">{{this.invoiceContact}}</div>
+        </div>
+
+      </div>
+    </div>
+
+
+    <div class="row invoice-print-table-wrapper pt-2 ">
+      <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 p-0 ">
+        <table class="table">
+          <thead class="page-break">
+          <tr class="page-break">
+            <th scope="col">#</th>
+            <th scope="col">Дел</th>
+            <th scope="col" class="text-center">Количина</th>
+            <th scope="col" class="text-center">Цена</th>
+            <th scope="col" class="text-end">Вкупно</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let autoPart of allPartsInInvoice, let i = index" [attr.data-index]="i">
+            <td>{{i + 1}}</td>
+            <td>{{autoPart.name}}</td>
+            <td class="text-center">{{autoPart.quantity}}</td>
+            <td class="text-center">{{autoPart.purchasePrice}}</td>
+            <td class="text-end">{{autoPart.totalPrice}}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="row invoice-print-last-info-wrapper" >
+      <div class="col-lg-9 col-md-9 col-sm-7 p-0">
+        <div class="mb-2">
+          <div class="invoice-print-labels">Овластено лице за потпис на фактури</div>
+          <div class="fw-bold">Влатко Митревски</div>
+        </div>
+        <div>
+          <div style="font-size: 0.73rem">
+            Рок на плаќање на фактурата е <b>15 (петнаесет) дена.</b>
+          </div>
+          <div style="font-size: 0.73rem">
+            Во случај на задоцнување со уплатата се пресметува законска камата.
+          </div>
+        </div>
+
+
+      </div>
+      <div class="col-lg-3 col-md-3 col-sm-5  justify-content-end">
+        <div class="row fw-bold p-1" *ngIf="!withoutDDV" style="border-bottom: 1px solid #7c7c7c">
+          <div class="col-lg-8 col-md-8 col-sm-8 d-flex justify-content-end p-0 invoice-print-labels">Цена без ДДВ:
+          </div>
+          <div
+            class="col-lg-4 col-md-4 col-sm-4 d-flex justify-content-end p-0 ">{{this.invoiceTotalPriceWithoutDDV}}</div>
+        </div>
+        <div class="row fw-bold p-1" *ngIf="!withoutDDV" style="border-bottom: 1px solid #7c7c7c">
+          <div class="col-lg-8 col-md-8 col-sm-8 d-flex justify-content-end p-0 invoice-print-labels">ДДВ:</div>
+          <div class="col-lg-4 col-md-4 col-sm-4 d-flex justify-content-end p-0">{{this.invoiceTotalPriceDDV}}</div>
+        </div>
+        <div class="row fw-bold p-1" style="border-bottom: 1px solid #7c7c7c">
+          <div class="col-lg-8 col-md-8 col-sm-8 d-flex justify-content-end p-0 invoice-print-labels">Вкупно:</div>
+          <div class="col-lg-4 col-md-4 col-sm-4 d-flex justify-content-end p-0">{{this.invoiceTotalPrice}}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</div>

@@ -1,0 +1,149 @@
+<div class="invoice-page-wrapper">
+  <div class="row justify-content-center">
+
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+      <div class="header-container row">
+        <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+          <button type="button" class="btn btn-lg btn-secondary" [routerLink]="['/home']">
+            Назад
+          </button>
+
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-5 col-xs-5 header-title">
+          Документи
+        </div>
+        <div class="col-lg-3 col-md-3 col-sm-4 col-xs-4 d-flex justify-content-end">
+          <button type="button" class="btn btn-lg btn-primary me-4" [routerLink]="['/upload-invoice']">
+            Прикачи
+          </button>
+          <div ngbDropdown class="d-inline-block">
+            <button class="btn btn-lg btn-primary " id="dropdownBasic1"
+                    ngbDropdownToggle>Креирај
+            </button>
+            <div ngbDropdownMenu aria-labelledby="dropdownBasic1" >
+              <button ngbDropdownItem [routerLink]="['/create-invoice/invoice']">Фактура</button>
+              <button ngbDropdownItem [routerLink]="['/create-invoice/offer']">Понуда</button>
+              <button ngbDropdownItem [routerLink]="['/create-invoice/warrant']">Работен налог</button>
+            </div>
+          </div>
+    <!--      <button type="button" class="btn btn-lg btn-primary" [routerLink]="['/create-invoice']" style="margin-left:4px">
+            Креирај
+          </button>-->
+        </div>
+
+      </div>
+
+
+      <div class="row justify-content-center mt-5 pt-4">
+        <div class="col-lg-4 col-md-8 col-sm-9 col-xs-12 invoice-page-search-container" >
+            <input id="typeahead-basic" class="form-control me-2"
+                   (selectItem)="onChosenOptionHandler($event)"
+                   [(ngModel)]="searchText"
+                   [ngbTypeahead]="search" [resultTemplate]="rt" [inputFormatter]="formatter" type="search"
+                   placeholder="Пребарај сопственик">
+            <ng-template #rt let-r="result" let-t="term">
+              <ngb-highlight [result]="r.searchLabel" [term]="t"></ngb-highlight>
+            </ng-template>
+        </div>
+
+        <div class="row mt-5 d-flex justify-content-center" *ngIf="selectedCar && selectedCar.owner">
+          <div class="col-lg-8 col-md-10 col-sm-12 col-xs-12">
+            <div class="row selected-car-information-wrapper">
+              <div class="col-lg-5 col-md-5 col-sm-4">
+                {{selectedCar.owner}}
+              </div>
+              <div class="col-lg-3 col-md-3 col-sm-3 text-center">
+                {{selectedCar.registrationNumber}}
+              </div>
+              <div class="col-lg-4 col-md-4 col-sm-5 text-center">
+                <button [routerLink]="['/invoice/historyOfAutoParts/' + selectedCar.registrationNumber]"  class="btn btn-primary">
+                  Историја на делови
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div *ngIf="selectedCar.invoiceDates && selectedCar.invoiceDates.length"
+             class="row justify-content-center mt-5">
+          <div class="col-lg-8 col-md-9 col-sm-12 col-xs-12 table-wrapper" *ngIf="selectedCar.invoices && selectedCar.invoices.length">
+            <div class="table-title-wrapper">Фактури</div>
+            <table class="table table-striped">
+              <thead>
+              <tr>
+                <th scope="col">Датум</th>
+                <th scope="col" class="text-end">Вкупно</th>
+                <th scope="col" class="text-end">Акции</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr class="" *ngFor="let invoiceDate of selectedCar.invoices">
+                <td class="pt-3">{{invoiceDate.date}}</td>
+                <td class="pt-3 text-end">{{invoiceDate.totalPrice}}</td>
+                <td class="text-end">
+                  <button class="btn btn-primary me-2" [routerLink]="['/invoice/' + invoiceDate.id]">Отвори</button>
+                  <button class="btn btn-danger " (click)="onRemoveInvoice(invoiceDate)" >Избриши</button>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="col-lg-8 col-md-9 col-sm-12 col-xs-12 table-wrapper" *ngIf="selectedCar.offers && selectedCar.offers.length">
+            <div class="table-title-wrapper">Понуди</div>
+            <table class="table table-striped">
+              <thead>
+              <tr>
+                <th scope="col">Датум</th>
+                <th scope="col" class="text-end">Вкупно</th>
+                <th scope="col" class="text-end">Акции</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr class="" *ngFor="let invoiceDate of selectedCar.offers">
+                <td class="pt-3">{{invoiceDate.date}}</td>
+                <td class="pt-3 text-end">{{invoiceDate.totalPrice}}</td>
+                <td class="text-end">
+                  <button class="btn btn-primary me-2" [routerLink]="['/invoice/' + invoiceDate.id]">Отвори</button>
+                  <button class="btn btn-danger " (click)="onRemoveInvoice(invoiceDate)" >Избриши</button>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="col-lg-8 col-md-9 col-sm-12 col-xs-12 table-wrapper" *ngIf="selectedCar.warrants && selectedCar.warrants.length">
+            <div class="table-title-wrapper">Работни налози</div>
+            <table class="table table-striped">
+              <thead>
+              <tr>
+                <th scope="col">Датум</th>
+                <th scope="col" class="text-end">Вкупно</th>
+                <th scope="col" class="text-end">Акции</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr class="" *ngFor="let invoiceDate of selectedCar.warrants">
+                <td class="pt-3">{{invoiceDate.date}}</td>
+                <td class="pt-3 text-end">{{invoiceDate.totalPrice}}</td>
+                <td class="text-end">
+                  <button class="btn btn-primary me-2" [routerLink]="['/invoice/' + invoiceDate.id]">Отвори</button>
+                  <button class="btn btn-danger " (click)="onRemoveInvoice(invoiceDate)" >Избриши</button>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <common-modal #modalForRemoveInvoices [modalConfig]="customModalConfigForRemoveInvoice">
+        <div>
+          Дали сте сигурни дека сакате да го избришете овој документ?
+        </div>
+      </common-modal>
+
+
+    </div>
+  </div>
+</div>
+

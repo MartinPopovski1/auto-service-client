@@ -1,0 +1,175 @@
+
+.invoice-page-wrapper {
+    /*display: none;*/
+}
+
+.header-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 18px 0;
+}
+
+.header-title {
+  display: flex;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.7rem;
+  user-select: none;
+}
+
+.invoice-form-content-wrapper {
+  display: flex;
+  flex-direction: column;
+
+  padding: 21px 14px;
+  background-color: white;
+  border-radius: 8px;
+}
+
+.delete-from-table-wrapper {
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.delete-from-table-wrapper:hover {
+  color: darkred;
+  cursor: pointer;
+}
+
+.check-icon-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color:#eee;
+  padding: 4px 0;
+  margin-top: 23px;
+  border-radius: 6px;
+  cursor: not-allowed;
+}
+
+.check-icon-wrapper-hover:hover {
+  color: lightgreen;
+  background-color: #727272;
+  cursor: pointer;
+}
+
+.check-icon-wrapper span {
+  font-size: 2em;
+}
+
+.invoice-print-select-wrapper {
+  margin: 15px 21px 0 0;
+
+}
+
+/* print version */
+
+.invoice-print-wrapper {
+  display: none;
+  height: 100vh;
+}
+
+.invoice-print-header {
+  height: 10%;
+}
+
+.invoice-print-header-logo {
+  padding: 0 !important;
+}
+
+.invoice-print-header-logo img {
+  width: 200px;
+}
+
+.invoice-print-header-title {
+  display: flex;
+  justify-content: flex-end;
+  font-size: 2.5rem;
+  font-weight: bold;
+
+  padding: 15px 21px 0 0;
+}
+
+.invoice-print-header-info {
+  padding: 30px 6px 6px 6px;
+}
+
+
+
+.invoice-print-values {
+  display: flex;
+  justify-content: flex-end;
+  font-weight: bold;
+  padding: 2px 0 1px 0;
+}
+
+.invoice-print-right-column-wrapper {
+  border-left: 1px solid #7c7c7c;
+}
+
+.invoice-print-content {
+ /* display: flex;
+  flex: 1 0 0;
+  flex-direction: column;*/
+  height: 90%;
+  padding: 6px 6px 24px 6px;
+  background-color: #eee;
+}
+
+.invoice-content-car-info-wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+}
+
+.invoice-print-table-wrapper {
+  height: 70%
+}
+
+.invoice-print-last-info-wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+}
+
+
+@media print {
+
+  thead {display: table-row-group;}
+  tr td{
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .invoice-page-wrapper {
+    display: none;
+  }
+
+  .invoice-print-header {
+  /*  background-color: #6ea0b1;*/
+    -webkit-print-color-adjust: exact;
+  }
+
+  .invoice-print-header-labels {
+    color: #797979;
+    font-weight: bold;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .invoice-print-labels {
+    padding: 1px 0 1px 0;
+    color: #797979;
+    font-weight: bold;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .invoice-print-wrapper {
+    display: block;
+  }
+
+  @page {
+    margin: 0;
+  }
+}
+
